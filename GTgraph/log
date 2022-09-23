@@ -4,7 +4,7 @@ Graph Generator Parameters
 **************************
 GRAPH_MODEL		: 0
 n			: 10
-p			: 0.500000
+p			: 0.250000
 m			: 100000000
 SELF_LOOPS		: 0
 MAX_WEIGHT		: 100

@@ -6,5 +6,8 @@ def get_adj_matrix(v, graph_file):
 			v1, v2 = [int(s) for s in line.split()[1:3]]
 			edges[v1-1][v2-1] = 1
 
-for row in get_adj_matrix(10, "sample.gr"):
-	print(row)
+	return edges
+
+def print_adj_matrix(edges):
+	for row in edges:
+		print(row)
