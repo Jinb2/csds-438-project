@@ -1,7 +1,11 @@
 import parse
 from random import randint
+import sys
 
 def bfs(v1, v2, edges):
+	if v1 == v2:
+		return [v1]
+
 	queue = [[v1]]
 	while len(queue) > 0:
 		path = queue[0]
@@ -14,6 +18,9 @@ def bfs(v1, v2, edges):
 	return []
 
 def dfs(v1, v2, edges):
+	if v1 == v2:
+		return [v1]
+
 	path = [v1]
 	idxs = [0]
 	while len(path) > 0:
@@ -31,14 +38,30 @@ def dfs(v1, v2, edges):
 		idxs.append(0)
 	return []
 
+def dijkstra(v1, v2, edges):
+	if v1 == v2:
+		return [v1]
+
+	visited = [v1]
+	while True:
+		for v in visited:
+			adj = [edge for edge, exists in enumerate(edges[v]) is exists and not edge in visited]
+				
+		
+
+def print_usage():
+	print("Usage: python graph.py file.gr")
+
 if __name__ == "__main__":
-	edges = parse.get_adj_matrix(10, "sample.gr")
+	if len(sys.argv) < 2:
+		print_usage()
+		exit(0)
+
+	edges = parse.get_adj_matrix(sys.argv[1])
 	parse.print_adj_matrix(edges)
 	
 	v1 = randint(0, 9)
 	v2 = randint(0, 9)
-	v1 = 7
-	v2 = 9
 
 	print(v1, v2)
 	print(bfs(v1, v2, edges))
