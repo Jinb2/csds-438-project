@@ -2,8 +2,9 @@ import parse
 from random import randint
 import sys
 import math
+import time
 
-def cost(path, edges):
+def path_cost(path, edges):
 	return sum([edges[v1][v2] for v1, v2 in zip(path[:-1], path[1:])])
 
 def bfs(v1, v2, edges):
@@ -17,7 +18,7 @@ def bfs(v1, v2, edges):
 
 		adj = [edge for edge, exists in enumerate(edges[path[-1]]) if exists and not edge in path]
 		if v2 in adj:
-			return path + [v2], cost(path + [v2], edges)
+			return path + [v2], path_cost(path + [v2], edges)
 		queue += [path + [v] for v in adj]
 	
 	return [], math.inf
@@ -37,7 +38,7 @@ def dfs(v1, v2, edges):
 			del idxs[-1]
 			continue
 		if adj[idx] == v2:
-			return path + [v2], cost(path + [v2], edges)
+			return path + [v2], path_cost(path + [v2], edges)
 		idxs[-1] += 1
 		path.append(adj[idx])
 		idxs.append(0)
@@ -72,6 +73,13 @@ def dijkstra(v1, v2, edges):
 
 	return [], math.inf	
 				
+def test(edges, verts, func):
+	sum_t = 0
+	for v1, v2 in verts:
+		t = time.time()
+		func(v1, v2, edges)
+		sum_t += time.time() - t
+	print(f"Time: {sum_t*1000/len(verts)}ms")
 		
 
 def print_usage():
@@ -85,11 +93,34 @@ if __name__ == "__main__":
 	edges = parse.get_adj_matrix(sys.argv[1])
 	parse.print_adj_matrix(edges)
 	
+	verts = [[randint(0, len(edges) - 1), randint(0, len(edges) - 1)] for _ in range(100)]
+	print("BFS:")
+	test(edges, verts, bfs)
+	print("DFS:")
+	test(edges, verts, dfs)
+	print("Dijkstra:")
+	test(edges, verts, dijkstra)
+
+	print()
+
 	v1 = randint(0, len(edges) - 1)
 	v2 = randint(0, len(edges) - 1)
 
 	print(v1, v2)
-	print(bfs(v1, v2, edges))
-	print(dfs(v1, v2, edges))
-	print(dijkstra(v1, v2, edges))
+
+	t = time.time()
+	path, cost = bfs(v1, v2, edges)
+	t = time.time() - t
+	print(f"BFS:\nPath: {path}, Cost: {cost}\nTime: {t*1000}ms")
+
+	t = time.time()
+	path, cost = dfs(v1, v2, edges)
+	t = time.time() - t
+	print(f"DFS:\nPath: {path}, Cost: {cost}\nTime: {t*1000}ms")
+
+	t = time.time()
+	path, cost = dijkstra(v1, v2, edges)
+	t = time.time() - t
+	print(f"Dijkstra:\nPath: {path}, Cost: {cost}\nTime: {t*1000}ms")
+
 
