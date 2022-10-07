@@ -14,18 +14,21 @@ def bfs(v1, v2, edges):
 	return []
 
 def dfs(v1, v2, edges):
-	path = [[v1, 0]]
+	path = [v1]
+	idxs = [0]
 	while len(path) > 0:
-		v, idx = path[-1]
+		v = path[-1]
+		idx = idxs[-1]
 		adj = [edge for edge, exists in enumerate(edges[v]) if exists and not edge in path]
 		if idx >= len(adj):
 			del path[-1]
+			del idxs[-1]
 			continue
 		if adj[idx] == v2:
-			return [p[0] for p in path] + [v2]
-		path[-1][1] += 1
-		path.append([adj[idx], 0])
-
+			return path + [v2]
+		idxs[-1] += 1
+		path.append(adj[idx])
+		idxs.append(0)
 	return []
 
 if __name__ == "__main__":
@@ -34,6 +37,8 @@ if __name__ == "__main__":
 	
 	v1 = randint(0, 9)
 	v2 = randint(0, 9)
+	v1 = 7
+	v2 = 9
 
 	print(v1, v2)
 	print(bfs(v1, v2, edges))
