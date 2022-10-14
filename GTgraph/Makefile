@@ -39,3 +39,7 @@ clean-sprng:
 
 clean-gen:
 	rm -rf *.dim log
+
+parse:
+	gcc parse.c -o parse
+	./parse uw_10.gr

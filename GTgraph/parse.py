@@ -17,3 +17,5 @@ def get_adj_matrix(graph_file):
 def print_adj_matrix(edges):
 	for row in edges:
 		print(row)
+
+print_adj_matrix(get_adj_matrix("uw_10.gr"))
