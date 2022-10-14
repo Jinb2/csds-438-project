@@ -12,16 +12,21 @@ def bfs(v1, v2, edges):
 		return [v1], 0
 
 	queue = [[v1]]
+	min_cost = math.inf
+	min_path = []
 	while len(queue) > 0:
 		path = queue[0]
 		del queue[0]
 
 		adj = [edge for edge, exists in enumerate(edges[path[-1]]) if exists and not edge in path]
 		if v2 in adj:
-			return path + [v2], path_cost(path + [v2], edges)
+			cost = path_cost(path + [v2], edges)
+			if cost < min_cost:
+				min_cost = cost
+				min_path = path + [v2]
 		queue += [path + [v] for v in adj]
 	
-	return [], math.inf
+	return min_path, min_cost
 
 def dfs(v1, v2, edges):
 	if v1 == v2:
@@ -29,6 +34,8 @@ def dfs(v1, v2, edges):
 
 	path = [v1]
 	idxs = [0]
+	min_cost = math.inf
+	min_path = []
 	while len(path) > 0:
 		v = path[-1]
 		idx = idxs[-1]
@@ -38,12 +45,15 @@ def dfs(v1, v2, edges):
 			del idxs[-1]
 			continue
 		if adj[idx] == v2:
-			return path + [v2], path_cost(path + [v2], edges)
+			cost = path_cost(path + [v2], edges)
+			if cost < min_cost:
+				min_cost = cost
+				min_path = path + [v2]
 		idxs[-1] += 1
 		path.append(adj[idx])
 		idxs.append(0)
 	
-	return [], math.inf
+	return min_path, min_cost
 
 def dijkstra(v1, v2, edges):
 	if v1 == v2:
@@ -70,7 +80,6 @@ def dijkstra(v1, v2, edges):
 		if dest_v == v2:
 			return paths[dest_v][1] + [dest_v], paths[dest_v][0]
 			
-
 	return [], math.inf	
 				
 def test(edges, verts, func):
