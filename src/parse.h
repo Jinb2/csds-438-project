@@ -1,3 +1,6 @@
+#ifndef PARSE_H
+#define PARSE_H
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -14,3 +17,5 @@ void del_adj_matrix(struct AdjMatrix* am);
 void print_adj_matrix(struct AdjMatrix* am);
 
 struct AdjMatrix parse_adj_matrix(const char* graph_file);
+
+#endif

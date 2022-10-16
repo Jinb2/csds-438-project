@@ -1,6 +1,7 @@
 %.o: %.c
 	gcc -c $< -o $@
 
-graph: graph.c parse.o
+SRCS = parse.o path.o solution.o
+graph: graph.c $(SRCS)
 	gcc $^ -o $@
 	./$@ uw_10.gr
