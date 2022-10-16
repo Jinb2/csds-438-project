@@ -40,6 +40,9 @@ clean-sprng:
 clean-gen:
 	rm -rf *.dim log
 
-parse:
-	gcc parse.c -o parse
-	./parse uw_10.gr
+%.o: %.c
+	gcc -c $< -o $@
+
+graph: graph.c parse.o
+	gcc $^ -o $@
+	./$@ uw_10.gr
