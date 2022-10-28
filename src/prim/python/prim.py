@@ -1,4 +1,4 @@
-import sys  # Library for INT_MAX
+import sys
 
 
 class Prim:
@@ -29,6 +29,7 @@ class Prim:
 
     # Function to construct and print MST for a graph
     # represented using adjacency matrix representation
+    # output edges of MST and their weights
     def primMST(self):
 
         # Key values used to pick minimum weight edge in cut
