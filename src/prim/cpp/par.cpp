@@ -12,7 +12,7 @@ int minKey(int key[], int visited[])
     int min = INT_MAX, index, i;
 #pragma omp parallel
     {
-        num = 4;
+        num = omp_get_num_threads();;
         int index_local = index;
         int min_local = min;
 #pragma omp for nowait
@@ -74,6 +74,10 @@ void primMST(int **graph)
 }
 int main()
 {   
+
+    // set num of threads
+    omp_set_num_threads(4)
+
     // generate graph of random size
     // int graph[V][V];
     int **graph = (int **)malloc(V * sizeof(int *)); 
