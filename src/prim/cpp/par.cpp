@@ -12,7 +12,7 @@ int minKey(int key[], int visited[])
     int min = INT_MAX, index, i;
 #pragma omp parallel
     {
-        num = omp_get_num_threads();
+        num = 4;
         int index_local = index;
         int min_local = min;
 #pragma omp for nowait
@@ -69,7 +69,7 @@ void primMST(int **graph)
                 from[v] = u, key[v] = graph[u][v];
         }
     }
-    // printMST(from, V, graph);
+    printMST(from, V, graph);
     // printf("\n%d threads are created in primMST\n", num_threads);
 }
 int main()
