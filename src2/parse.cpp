@@ -2,7 +2,7 @@
 
 namespace Graph {
 AdjMatrix parse(const std::string& file_name) {
-    std::ifstream file("uw_10.gr");
+    std::ifstream file(file_name);
     std::string line;
     // Skip to line 2
     int i = 0;

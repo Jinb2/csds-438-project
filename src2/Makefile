@@ -1,7 +1,11 @@
-%.o: %.c
-	g++ -c $< -o $@
+graph_omp.o: graph_omp.cpp
+	g++ -fopenmp -std=c++11 -c $< -o $@	
 
-SRCS = parse.o graph.o
-graph: main.cpp $(SRCS)
-	g++ $^ -o $@
-	./$@ uw_10.gr
+%.o: %.c
+	g++ -std=c++11 -c $< -o $@
+
+graph: main.cpp parse.o graph.o
+	g++ -std=c++11 $^ -o $@
+
+graph_omp: main.cpp parse.o graph_omp.o
+	g++ -fopenmp -std=c++11 $^ -o $@

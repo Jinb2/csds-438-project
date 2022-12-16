@@ -12,6 +12,7 @@ namespace Graph {
 Solution bfs(const AdjMatrix& edges, Vertex v1, Vertex v2);
 
 Solution dfs(const AdjMatrix& edges, Vertex v1, Vertex v2);
+Solution dfs(const AdjMatrix& edges, Path path, std::vector<int> idxs, Vertex v2);
 
 Solution dijkstra(const AdjMatrix& edges, Vertex v1, Vertex v2);
 }  // namespace Graph
