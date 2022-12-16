@@ -52,13 +52,13 @@ Solution dfs(const AdjMatrix& edges, Vertex v1, Vertex v2) {
         }
     } 
 
-    const int N = 10;
+    const int N = 25;
 
     if (paths.empty()) {
         return {{}, std::numeric_limits<int>::max()};
     }
 
-    std::vector<Solution> slns(N);
+    std::vector<Solution> slns(paths.size());
     #pragma omp parallel shared (edges, paths, slns, v2)
     {
     #pragma omp for
@@ -129,13 +129,30 @@ Solution dijkstra(const AdjMatrix& edges, Vertex v1, Vertex v2) {
 
     std::unordered_map<Vertex, Solution> paths = {{v1, {{}, 0}}};
 
+    Solution soln = {{}, std::numeric_limits<int>::max()}; 
+
+    std::vector<std::pair<int, std::pair<Vertex, Vertex>>> min_vals;
+
+    #pragma omp parallel shared (edges, paths, v2, min_vals, soln) num_threads(10)
+    {
+    const int num_threads = omp_get_num_threads();
+    const int block_w = (int)(edges.size() / num_threads);
+
+    #pragma omp single
+    {
+        min_vals.resize(num_threads);
+    }
+
+    int id = omp_get_thread_num();
+    int start = id * block_w;
+    int end = id == num_threads - 1 ? edges.size() : start + block_w;
     while (true) {
         int min_cost = std::numeric_limits<int>::max();
         Vertex src_v = -1, dest_v = -1;
         for (auto& pair : paths) {
             Vertex min_v = -1;
             int min_w = std::numeric_limits<int>::max();
-            for (int i = 0, n = edges.size(); i < n; i++) {
+            for (int i = start; i < end; i++) {
                 if (i == pair.first) {
                     continue;
                 }
@@ -155,18 +172,33 @@ Solution dijkstra(const AdjMatrix& edges, Vertex v1, Vertex v2) {
                 dest_v = min_v;
             }
         }
+        min_vals.at(id) = {min_cost, {src_v, dest_v}};
+        #pragma omp barrier
+        {}
+        #pragma omp single copyprivate(min_cost, src_v, dest_v)
+        {
+            for (auto pair : min_vals) {
+                if (pair.first < min_cost) {
+                    min_cost = pair.first;
+                    src_v = pair.second.first;
+                    dest_v = pair.second.second;
+                }
+            }
+            paths[dest_v] = {paths.at(src_v).path, min_cost};
+            paths.at(dest_v).path.push_back(src_v);
+            if (dest_v == v2) {
+                Path path = paths.at(dest_v).path;
+                path.push_back(dest_v);
+                soln = {path, paths.at(dest_v).cost};
+                src_v = -1;
+            }
+        }
         if (src_v == -1) {
             break;
         }
-        paths[dest_v] = {paths.at(src_v).path, min_cost};
-        paths.at(dest_v).path.push_back(src_v);
-        if (dest_v == v2) {
-            Path path = paths.at(dest_v).path;
-            path.push_back(dest_v);
-            return {path, paths.at(dest_v).cost};
-        }
+    }
     }
 
-    return {{}, std::numeric_limits<int>::max()};
+    return soln;
 }
 }  // namespace Graph
