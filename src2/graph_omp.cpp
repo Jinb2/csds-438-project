@@ -34,7 +34,7 @@ Solution bfs(const AdjMatrix& edges, Vertex v1, Vertex v2) {
             #pragma omp critical
             {
             if (s.cost < min_cost_ref) {
-                #pragma omp write
+                #pragma omp atomic write
                 min_cost_ref = s.cost;
             }
             }
