@@ -6,15 +6,72 @@ Solution bfs(const AdjMatrix& edges, Vertex v1, Vertex v2) {
     if (v1 == v2) {
         return {{v1}, 0};
     }
+    
+    std::vector<Path> paths;
+
+    for (int v = 0; v < edges.size(); v++) {
+        if (edges.at(v1).at(v)) {
+            paths.push_back({v1, v});
+        }
+    } 
+
+    const int N = 25;
+
+    if (paths.empty()) {
+        return {{}, std::numeric_limits<int>::max()};
+    }
+
+    std::vector<Solution> slns(paths.size());
+    int min_cost = std::numeric_limits<int>::max();
+    int min_depth = 0;
+    #pragma omp parallel shared (edges, paths, slns, min_cost, min_depth, v2)
+    {
+    #pragma omp for
+    for (int i = 0; i < N; i++) {
+        if (i < paths.size()) {
+            slns.at(i) = bfs(edges, paths.at(i), v2, min_cost, min_depth);
+            Solution& s = slns.at(i);
+            #pragma omp critical
+            {
+            if (s.cost < min_cost) {
+                #pragma omp capture
+                {
+                min_cost = s.cost;
+                min_depth = s.path.size();
+                }
+            }
+            }
+        }
+    }
+    }
+
+    Solution best_sln = slns.at(0);
+    for (Solution& sln : slns) {
+        if (sln.cost < best_sln.cost) {
+            best_sln = sln;
+        }
+    }
+
+    return best_sln;
+}
+
+Solution bfs(const AdjMatrix& edges, Path start, Vertex v2, int& global_min_cost, int& global_min_depth) {
+    if (start.back() == v2) {
+        return {start, Graph::cost(edges, start)};
+    }
 
     std::queue<Path> paths;
-    paths.push({v1});
+    paths.push(start);
 
     int min_cost = std::numeric_limits<int>::max();
     Path min_path;
     while (!paths.empty()) {
         Path path = paths.front();
         paths.pop();
+
+        if (min_cost > global_min_cost && path.size() > global_min_depth) {
+            break;
+        }
 
         Vertex last_v = path.back();
 
