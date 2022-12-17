@@ -15,7 +15,7 @@ Solution bfs(const AdjMatrix& edges, Vertex v1, Vertex v2) {
         }
     } 
 
-    const int N = 25;
+    const int N = 100;
 
     if (paths.empty()) {
         return {{}, std::numeric_limits<int>::max()};
@@ -23,22 +23,19 @@ Solution bfs(const AdjMatrix& edges, Vertex v1, Vertex v2) {
 
     std::vector<Solution> slns(paths.size());
     int min_cost = std::numeric_limits<int>::max();
-    int min_depth = 0;
-    #pragma omp parallel shared (edges, paths, slns, min_cost, min_depth, v2)
+    int& min_cost_ref = min_cost;
+    #pragma omp parallel shared (edges, paths, slns, min_cost_ref, v2)
     {
     #pragma omp for
     for (int i = 0; i < N; i++) {
         if (i < paths.size()) {
-            slns.at(i) = bfs(edges, paths.at(i), v2, min_cost, min_depth);
             Solution& s = slns.at(i);
+            s = bfs(edges, paths.at(i), v2, min_cost_ref);
             #pragma omp critical
             {
-            if (s.cost < min_cost) {
-                #pragma omp capture
-                {
-                min_cost = s.cost;
-                min_depth = s.path.size();
-                }
+            if (s.cost < min_cost_ref) {
+                #pragma omp write
+                min_cost_ref = s.cost;
             }
             }
         }
@@ -55,7 +52,7 @@ Solution bfs(const AdjMatrix& edges, Vertex v1, Vertex v2) {
     return best_sln;
 }
 
-Solution bfs(const AdjMatrix& edges, Path start, Vertex v2, int& global_min_cost, int& global_min_depth) {
+Solution bfs(const AdjMatrix& edges, Path start, Vertex v2, int& global_min_cost) {
     if (start.back() == v2) {
         return {start, Graph::cost(edges, start)};
     }
@@ -69,10 +66,6 @@ Solution bfs(const AdjMatrix& edges, Path start, Vertex v2, int& global_min_cost
         Path path = paths.front();
         paths.pop();
 
-        if (min_cost > global_min_cost && path.size() > global_min_depth) {
-            break;
-        }
-
         Vertex last_v = path.back();
 
         if (edges.at(last_v).at(v2)) {
@@ -82,7 +75,7 @@ Solution bfs(const AdjMatrix& edges, Path start, Vertex v2, int& global_min_cost
                 min_cost = cost;
                 min_path = path;
             }
-        } else {
+        } else if (Graph::cost(edges, path) < std::min(global_min_cost, min_cost)) {
             for (int v = 0; v < edges.size(); v++) {
                 if (edges.at(last_v).at(v) &&
                     std::find(path.begin(), path.end(), v) == path.end()) {

@@ -24,7 +24,7 @@ Solution bfs(const AdjMatrix& edges, Vertex v1, Vertex v2) {
                 min_cost = cost;
                 min_path = path;
             }
-        } else {
+        } else if (Graph::cost(edges, path) < min_cost) {
             for (int v = 0; v < edges.size(); v++) {
                 if (edges.at(last_v).at(v) &&
                     std::find(path.begin(), path.end(), v) == path.end()) {

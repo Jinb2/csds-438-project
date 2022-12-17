@@ -13,8 +13,8 @@ echo "Serial:"
 echo "OpenMp:"
 ./graph_omp uw_15.gr
 
-echo "20:"
+echo "100:"
 echo "Serial:"
-./graph uw_20.gr
+./graph uw_100.gr
 echo "OpenMp:"
-./graph_omp uw_20.gr
+./graph_omp uw_100.gr
