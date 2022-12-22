@@ -1,6 +1,3 @@
-tar -xzvf GTgraph.tar.gz
-cd GTgraph
-make
-random/GTgraph-random -t 0 -v 10 -p [Probability of a given edge]
-python parse.py
-# Implement your algorithm using edges from parse.py
+`prim`: Contains the code for Prim's algorithm
+
+`search`: Contains the code for DFS, BFS, and Dijkstra's algorithm
