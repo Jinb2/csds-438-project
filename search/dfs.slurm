@@ -3,18 +3,18 @@
 
 echo "10:"
 echo "Serial:"
-./graph uw_10.gr
+./dfs_serial uw_10.gr
 echo "OpenMp:"
-./graph_omp uw_10.gr
+./dfs_omp uw_10.gr
 
 echo "15:"
 echo "Serial:"
-./graph uw_15.gr
+./dfs_serial uw_15.gr
 echo "OpenMp:"
-./graph_omp uw_15.gr
+./dfs_omp uw_15.gr
 
-echo "100:"
+echo "20:"
 echo "Serial:"
-./graph uw_100.gr
+./dfs_serial uw_20.gr
 echo "OpenMp:"
-./graph_omp uw_100.gr
+./dfs_omp uw_20.gr

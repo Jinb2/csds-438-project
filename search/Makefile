@@ -4,8 +4,8 @@ graph_omp.o: graph_omp.cpp
 %.o: %.c
 	g++ -std=c++11 -c $< -o $@
 
-graph: main.cpp parse.o graph.o
+%_serial: %.cpp parse.o graph.o
 	g++ -std=c++11 $^ -o $@
 
-graph_omp: main.cpp parse.o graph_omp.o
+%_omp: %.cpp parse.o graph_omp.o
 	g++ -fopenmp -std=c++11 $^ -o $@
